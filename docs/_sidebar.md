@@ -1,8 +1,10 @@
 * **1-docker**
   * [docker+containerd容器管理](1-docker/docker+containerd容器管理.md)
+  * [VMware虛擬基建置](1-docker/VMware虛擬基建置.md)
 
 * **2-k8s-orchestration**
   * [kubeadm部署k8s1.23.0单节点集群(docker)](2-k8s-orchestration/1-kubeadm-v1.23-singal/kubeadm部署k8s1.23.0单节点集群(docker).md)
+  * [kubeadm環境準備](2-k8s-orchestration/1-kubeadm-v1.23-singal/kubeadm環境準備.md)
   * [kubeadm部署k8s1.27单节点集群(containerd)](2-k8s-orchestration/2-kubeadm-v1.27-singal/kubeadm部署k8s1.27单节点集群(containerd).md)
   * [kubeadm部署k8s1.23.0高可用集群(docker)](2-k8s-orchestration/3-kubeadm-v.1.23-ha/kubeadm部署k8s1.23.0高可用集群(docker).md)
   * [二进制部署k8s1.23.0高可用集群(docker)](2-k8s-orchestration/4-binary-v.1.23-ha/二进制部署k8s1.23.0高可用集群(docker).md)
