@@ -1,4 +1,4 @@
-### 本资源由 itjc8.com 收集整理
+
 # k8s集群部署CICD环境
 
 ![](k8s基于Jenkins实现CICD.assets/微信图片_20220627170935.jpg)

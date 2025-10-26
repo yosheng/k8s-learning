@@ -1,4 +1,4 @@
-### 本资源由 itjc8.com 收集整理
+
 # 第一章：基于Containerd的k8s集群部署
 
 
