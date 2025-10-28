@@ -7,6 +7,7 @@
   
   * [多節點環境準備](2-k8s-orchestration/多節點環境準備.md)
   * [生成Docker離線安裝包](2-k8s-orchestration/生成Docker離線安裝包.md)
+  * [部署K8S節點集群Docker](2-k8s-orchestration/部署K8S節點集群Docker.md)
   * [kubeadm部署k8s1.23.0单节点集群(docker)](2-k8s-orchestration/1-kubeadm-v1.23-singal/kubeadm部署k8s1.23.0单节点集群(docker).md)
   * [kubeadm部署k8s1.27单节点集群(containerd)](2-k8s-orchestration/2-kubeadm-v1.27-singal/kubeadm部署k8s1.27单节点集群(containerd).md)
   * [kubeadm部署k8s1.23.0高可用集群(docker)](2-k8s-orchestration/3-kubeadm-v.1.23-ha/kubeadm部署k8s1.23.0高可用集群(docker).md)

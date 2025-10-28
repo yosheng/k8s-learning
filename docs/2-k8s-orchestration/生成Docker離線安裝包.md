@@ -28,5 +28,3 @@ tar -zcf docker.tar.gz docker
 最後使用 `tar -tf docker.tar.gz`查看結果
 
 ![](images/生成Docker離線安裝包/2025-10-28-00-33-30-image.png)
-
-
