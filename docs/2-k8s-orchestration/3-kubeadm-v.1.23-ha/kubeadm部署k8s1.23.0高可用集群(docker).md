@@ -1,7 +1,4 @@
-
 # 第一章：K8S介绍及部署
-
-
 
 #### Kubernetes介绍
 
@@ -15,8 +12,6 @@ kubernetes（k8s）是基于Google内部的Borg系统的特征开发的一个版
 
 代码托管平台：https://github.com/Kubernetes
 
-
-
 #### kubernetes具备的功能
 
 - 自我修复：k8s可以监控容器的运行状况，并在发现容器出现异常时自动重启故障实例；
@@ -28,8 +23,6 @@ kubernetes（k8s）是基于Google内部的Borg系统的特征开发的一个版
 - 存储管理：k8s可以自动管理应用的存储资源，为应用提供持久化的数据存储。这样，在应用实例发生变化时，用户数据仍能保持一致，确保数据的持久性；
 - 密钥与配置管理：Kubernetes 允许你存储和管理敏感信息，例如：密码、令牌、证书、ssh密钥等信息进行统一管理，并共享给多个容器复用；
 
-
-
 #### kubernetes集群角色
 
 k8s集群需要建⽴在多个节点上，将多个节点组建成一个集群，然后进⾏统⼀管理，但是在k8s集群内部，这些节点⼜被划分成了两类⻆⾊：
@@ -38,8 +31,6 @@ k8s集群需要建⽴在多个节点上，将多个节点组建成一个集群�
 
 - ⼀类⻆⾊为⼯作节点，叫Node，负责运行集群中所有用户的容器应用， 执行实际的工作负载 ； 
 
-
-
 **Master管理节点组件：**
 
 - API Server：作为集群的控制中心，处理外部和内部通信，接收用户请求并处理集群内部组件之间的通信；
@@ -47,15 +38,11 @@ k8s集群需要建⽴在多个节点上，将多个节点组建成一个集群�
 - Controller Manager：管理集群中的各种控制器，例如 Deployment、ReplicaSet、Node 控制器等，管理集群中的各种资源；
 - etcd：作为集群的数据存储，保存集群的配置信息和状态信息；
 
-
-
 **Node工作节点组件：**
 
 - Kubelet：负责与 Master 节点通信，并根据 Master 节点的调度决策来创建、更新和删除 Pod，同时维护 Node 节点上的容器状态；
 - 容器运行时（如 Docker、containerd 等）：负责运行和管理容器，提供容器生命周期管理功能。例如：创建、更新、删除容器等；
 - Kube-proxy：负责为集群内的服务实现网络代理和负载均衡，确保服务的访问性；
-
-
 
 **非必须的集群插件：**
 
@@ -63,44 +50,36 @@ k8s集群需要建⽴在多个节点上，将多个节点组建成一个集群�
 - Dashboard： 是k8s集群的Web管理界面；
 - 资源监控：例如metrics-server监视器，用于监控集群中资源利用率；
 
- 
-
 #### kubernetes集群类型
 
 - 一主多从集群：由一台Master管理节点和多台Node工作节点组成，生产环境下Master节点存在单点故障的风险，适合学习和测试环境使用；
 
 - 多主多从集群：由多台Master管理节点和多Node工作节点组成，安全性高，适合生产环境使用；
 
-
-
 #### kubernetes集群规划
 
-| 主机IP        | 主机名   | 主机配置 | 角色        |
-| ------------- | -------- | -------- | ----------- |
-| 192.168.0.10  | master01 | 2C/4G    | 管理节点    |
-| 192.168.0.11  | master02 | 2C/4G    | 管理节点    |
-| 192.168.0.12  | master03 | 2C/4G    | 管理节点    |
-| 192.168.0.13  | worker01 | 2C/4G    | 工作节点    |
-| 192.168.0.70  | k8s-ha1  | 1C/2G    | LB          |
-| 192.168.0.71  | k8s-ha2  | 1C/2G    | LB          |
-| 192.168.0.100 | /        | /        | VIP(虚拟IP) |
-
-
+| 主机IP          | 主机名      | 主机配置  | 角色        |
+| ------------- | -------- | ----- | --------- |
+| 192.168.0.10  | master01 | 2C/4G | 管理节点      |
+| 192.168.0.11  | master02 | 2C/4G | 管理节点      |
+| 192.168.0.12  | master03 | 2C/4G | 管理节点      |
+| 192.168.0.13  | worker01 | 2C/4G | 工作节点      |
+| 192.168.0.70  | k8s-ha1  | 1C/2G | LB        |
+| 192.168.0.71  | k8s-ha2  | 1C/2G | LB        |
+| 192.168.0.100 | /        | /     | VIP(虚拟IP) |
 
 #### 集群前期环境准备
 
 **修改每个节点主机名**
 
-~~~powershell
+```powershell
 hostnamectl set-hostname master01
 hostnamectl set-hostname master02
 hostnamectl set-hostname master03
 hostnamectl set-hostname worker01
 hostnamectl set-hostname k8s-ha1
 hostnamectl set-hostname k8s-ha2
-~~~
-
-
+```
 
 **以下前期环境准备需要在所有节点都执行** 
 
@@ -116,13 +95,11 @@ echo "192.168.0.70 k8s-ha1" >> /etc/hosts
 echo "192.168.0.71 k8s-ha2" >> /etc/hosts
 ```
 
-
-
 **开启bridge网桥过滤功能**
 
 bridge(桥接) 是 Linux 系统中的一种虚拟网络设备，它充当一个虚拟的交换机，为集群内的容器提供网络通信功能，容器就可以通过这个 bridge 与其他容器或外部网络通信了。
 
-~~~powershell
+```powershell
 cat > /etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -133,9 +110,9 @@ EOF
 net.bridge.bridge-nf-call-ip6tables = 1  //对网桥上的IPv6数据包通过iptables处理
 net.bridge.bridge-nf-call-iptables = 1   //对网桥上的IPv4数据包通过iptables处理
 net.ipv4.ip_forward = 1       //开启IPv4路由转发,来实现集群中的容器与外部网络的通信
-~~~
+```
 
-~~~powershell
+```powershell
 #由于开启bridge功能，需要加载br_netfilter模块来允许在bridge设备上的数据包经过iptables防火墙处理
 modprobe br_netfilter && lsmod | grep br_netfilter
 
@@ -146,14 +123,12 @@ bridge                151336  1 br_netfilter
 #参数解释：
 modprobe        //命令可以加载内核模块
 br_netfilter    //模块模块允许在bridge设备上的数据包经过iptables防火墙处理
-~~~
+```
 
-~~~powershell
+```powershell
 #加载配置文件，使上述配置生效
 sysctl -p /etc/sysctl.d/k8s.conf
-~~~
-
-
+```
 
 **配置ipvs功能**
 
@@ -161,11 +136,9 @@ sysctl -p /etc/sysctl.d/k8s.conf
 
 `ipset` 和 `ipvsadm`  是两个与网络管理和负载均衡相关的软件包，在k8s代理模式中，提供多种负载均衡算法，如轮询（Round Robin）、最小连接（Least Connection）和加权最小连接（Weighted Least Connection）等；
 
-~~~powershell
+```powershell
 yum -y install ipset ipvsadm
-~~~
-
-
+```
 
 将需要加载的ipvs相关模块写入到文件中
 
@@ -187,15 +160,11 @@ ip_vs_sh      //哈希算法的模块,同一客户端的请求始终被分发到
 nf_conntrack  //链接跟踪的模块,用于跟踪一个连接的状态,例如 TCP 握手、数据传输和连接关闭等
 ```
 
-
-
 执行文件来加载模块
 
-~~~powershell
+```powershell
 chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules && lsmod | grep -e ip_vs -e nf_conntrack
-~~~
-
-
+```
 
 **关闭SWAP分区**
 
@@ -210,8 +179,6 @@ sed -ri 's/.*swap.*/#&/' /etc/fstab
 grep ".*swap.*" /etc/fstab
 ```
 
-
-
 检查swap
 
 ```sh
@@ -219,8 +186,6 @@ free -h
 ...
 Swap:            0B          0B          0B
 ```
-
-
 
 #### Docker环境准备
 
@@ -231,18 +196,16 @@ Swap:            0B          0B          0B
 yum install -y yum-utils && yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ```
 
-~~~powershell
+```powershell
 #安装指定版本并设置启动及开机自启动
 yum -y install docker-ce-20.10.9-3.el7
-~~~
-
-
+```
 
 #### 配置Cgroup驱动程序
 
 启用Cgroup控制组，用于限制进程的资源使用量，如CPU、内存、磁盘IO等
 
-~~~powershell
+```powershell
 #在/etc/docker/daemon.json添加如下内容
 mkdir /etc/docker
 
@@ -251,14 +214,12 @@ cat > /etc/docker/daemon.json <<EOF
         "exec-opts": ["native.cgroupdriver=systemd"]
 }
 EOF
-~~~
+```
 
-~~~powershell
+```powershell
 #启动服务并设置随机自启
 systemctl enable docker ; systemctl start docker
-~~~
-
-
+```
 
 #### HAProxy及keepalived部署
 
@@ -266,25 +227,19 @@ systemctl enable docker ; systemctl start docker
 
 Keepalived为haproxy提供vip（192.168.0.100）在二个haproxy实例之间提供主备，降低当其中一个haproxy失效时对服务的影响。
 
-
-
 ![](kubeadm部署k8s1.23.0高可用集群(docker).accets/17523a485b9e77fef907090500c74a5.jpg)
-
-
 
 **提示：以下操作只需要在[k8s-ha1]()、[k8s-ha2]()配置。**
 
-~~~powershell
+```powershell
 yum -y install haproxy keepalived
-~~~
-
-
+```
 
 **haproxy配置文件内容如下**
 
 该配置文件内容在k8s-ha1与k8s-ha2节点保持一致
 
-~~~powershell
+```powershell
 cat /etc/haproxy/haproxy.cfg
 
 #---------------------------------------------------------------------
@@ -336,23 +291,19 @@ backend k8s-master                #后端服务器组，要与前端中设置的
   server master01   192.168.0.10:6443  check  # 根据自己环境修改后端实例IP
   server master02   192.168.0.11:6443  check  # 根据自己环境修改后端实例IP
   server master03   192.168.0.12:6443  check  # 根据自己环境修改后端实例IP
-~~~
-
-
+```
 
 k8s-ha1与k8s-ha2启动haproxy
 
-~~~powershell
+```powershell
 systemctl start haproxy
 systemctl enable haproxy
 systemctl status haproxy
-~~~
-
-
+```
 
 **k8s-ha1节点keepalived配置文件内容如下**
 
-~~~powershell
+```powershell
 cat /etc/keepalived/keepalived.conf
 
 ! Configuration File for keepalived
@@ -385,9 +336,7 @@ vrrp_instance VI_1 {
        chk_apiserver
     }
 }
-~~~
-
-
+```
 
 配置文件详解
 
@@ -420,10 +369,10 @@ vrrp_instance VI_1 {
     authentication {
         #PASS为密码验证
         auth_type PASS
-	#此密码必须为1到8个字符，在同一个VRRP组中，所有节点必须使用相同的密码，以确保正确的身份验证和通信
+    #此密码必须为1到8个字符，在同一个VRRP组中，所有节点必须使用相同的密码，以确保正确的身份验证和通信
         auth_pass abc123
     }
-	
+
     #定义虚拟IP地址
     virtual_ipaddress {
         192.168.0.100/24      
@@ -436,11 +385,9 @@ vrrp_instance VI_1 {
 }
 ```
 
-
-
 k8s-ha1定义检测haproxy脚本
 
-~~~powershell
+```powershell
 cat  /etc/keepalived/check_apiserver.sh
 
 #!/bin/bash
@@ -463,9 +410,7 @@ if [[ $err != "0" ]]; then
     echo "systemctl stop keepalived"
     /usr/bin/systemctl stop keepalived
 fi
-~~~
-
-
+```
 
 脚本添加执行权限
 
@@ -473,11 +418,9 @@ fi
 chmod +x /etc/keepalived/check_apiserver.sh
 ```
 
-
-
 **k8s-ha2节点keepalived配置文件内容如下**
 
-~~~powershell
+```powershell
 cat /etc/keepalived/keepalived.conf
 
 ! Configuration File for keepalived
@@ -494,10 +437,10 @@ vrrp_script chk_apiserver {
 rise 1
 }
 vrrp_instance VI_1 {
-    state BACKUP		#需要修改节点身份
+    state BACKUP        #需要修改节点身份
     interface ens32
     virtual_router_id 51
-    priority 99			#备用节点优先级不能高于master
+    priority 99            #备用节点优先级不能高于master
     advert_int 2
     authentication {
         auth_type PASS
@@ -510,13 +453,11 @@ vrrp_instance VI_1 {
        chk_apiserver
     }
 }
-~~~
-
-
+```
 
 k8s-ha2定义检测haproxy脚本
 
-~~~powershell
+```powershell
 cat /etc/keepalived/check_apiserver.sh
 #!/bin/bash
 
@@ -541,9 +482,7 @@ if [[ $err != "0" ]]; then
 else
     exit 0
 fi
-~~~
-
-
+```
 
 脚本添加执行权限
 
@@ -551,26 +490,20 @@ fi
 chmod +x /etc/keepalived/check_apiserver.sh
 ```
 
-
-
 k8s-ha1与k8s-ha2节点启动keepalived
 
-~~~powershell
+```powershell
 systemctl start keepalived
 systemctl enable keepalived
 systemctl status keepalived
-~~~
-
-
+```
 
 查看集群VIP地址
 
-~~~powershell
+```powershell
 查看VIP（提示：ifconfig命令查看不到VIP）
 [root@k8s-ha1 ~]# ip a s ens32
-~~~
-
-
+```
 
 #### k8s集群部署方式
 
@@ -580,15 +513,13 @@ kubernetes集群有多种部署方式，目前常用的部署方式有如下两�
 - 二进制包部署方式：从官网下载每个组件的二进制包，依次去安装，部署麻烦
 - 其他方式：通过一些开源的工具搭建，例如：sealos
 
-
-
 #### k8s YUM源准备
 
 本实验使用阿里云YUM源
 
 > 集群所有节点都安装，不包括负载均衡节点
 
-~~~powershell
+```powershell
 cat > /etc/yum.repos.d/k8s.repo <<EOF
 [kubernetes]
 name=Kubernetes
@@ -598,9 +529,7 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
-~~~
-
-
+```
 
 #### 集群软件安装
 
@@ -612,29 +541,25 @@ EOF
 
 > 集群所有节点都安装，不包括负载均衡节点
 
-~~~powershell
+```powershell
 #安装指定版本
 yum install -y kubeadm-1.23.0-0  kubelet-1.23.0-0 kubectl-1.23.0-0
-~~~
-
-
+```
 
 #### 配置kubelet
 
 启用Cgroup控制组，用于限制进程的资源使用量，如CPU、内存、磁盘IO等
 
-~~~powershell
+```powershell
 cat > /etc/sysconfig/kubelet <<EOF
 KUBELET_EXTRA_ARGS="--cgroup-driver=systemd"
 EOF
-~~~
+```
 
-~~~powershell
+```powershell
 #设置kubelet为开机自启动即可，集群初始化后自动启动
 systemctl enable kubelet
-~~~
-
-
+```
 
 #### 集群初始化
 
@@ -654,19 +579,15 @@ k8s.gcr.io/etcd:3.5.1-0
 k8s.gcr.io/coredns/coredns:v1.8.6
 ```
 
-
-
 在master01节点初始化集群，需要创建集群初始化配置文件
 
-~~~powershell
+```powershell
 [root@master01 ~]# kubeadm config print init-defaults > kubeadm-config.yaml
-~~~
-
-
+```
 
 配置文件需要修改如下内容
 
-~~~powershell
+```powershell
 [root@master01 ~]# vim kubeadm-config.yaml
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
@@ -690,12 +611,12 @@ nodeRegistration:
 ---
 apiServer:
   certSANs:
-  - 192.168.0.100                        	#在证书中指定的可信IP地址，负载均衡的VIP
+  - 192.168.0.100                            #在证书中指定的可信IP地址，负载均衡的VIP
   timeoutForControlPlane: 4m0s
 apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
-controlPlaneEndpoint: 192.168.0.100:6443  	#负载均衡器的IP，主要让Kubernetes知道生成主节点令牌
+controlPlaneEndpoint: 192.168.0.100:6443      #负载均衡器的IP，主要让Kubernetes知道生成主节点令牌
 controllerManager: {}
 dns:
   type: CoreDNS
@@ -710,69 +631,55 @@ networking:
   podSubnet: 10.244.0.0/16    #pod网络
   serviceSubnet: 10.96.0.0/12 #service网络
 scheduler: {}
-~~~
+```
 
-~~~powershell
+```powershell
 #初始化集群
 [root@master01 ~]# kubeadm init --config /root/kubeadm-config.yaml --upload-certs
 
 #选项说明：
 --upload-certs   //初始化过程将生成证书，并将其上传到etcd存储中，否则节点无法加入集群
-~~~
+```
 
 ```powershell
 提示：如果哪个节点出现问题，可以使用下列命令重置当前节点
 kubeadm  reset
 ```
 
-
-
 初始化成功后，按照提示执行下边命令
 
-~~~powershell
+```powershell
 [root@master01 ~]# export KUBECONFIG=/etc/kubernetes/admin.conf
 [root@master01 ~]# mkdir -p $HOME/.kube
 [root@master01 ~]# cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 [root@master01 ~]# chown $(id -u):$(id -g) $HOME/.kube/config
-~~~
-
-
+```
 
 #### Master节点加入集群
 
 提示：按照自己当前集群生成的token在master02、master03节点执行
 
-
-
 #### 工作节点加入集群
 
 提示：按照自己当前集群生成的token在worker01、worker02节点执行
 
-
-
 #### 部署Calico网络
 
 Calico 和 Flannel 是两种流行的 k8s 网络插件，它们都为集群中的 Pod 提供网络功能。然而，它们在实现方式和功能上有一些重要区别： 
-
-
 
 **网络模型的区别：**
 
 - Calico 使用 BGP（边界网关协议）作为其底层网络模型。它利用 BGP 为每个 Pod 分配一个唯一的 IP 地址，并在集群内部进行路由。[Calico 支持网络策略，可以对流量进行精细控制，允许或拒绝特定的通信]()。
 - Flannel 则采用了一个简化的覆盖网络模型。它为每个节点分配一个 IP 地址子网，然后在这些子网之间建立覆盖网络。Flannel 将 Pod 的数据包封装到一个更大的网络数据包中，并在节点之间进行转发。[Flannel 更注重简单和易用性，不提供与 Calico 类似的网络策略功能]()。
 
-
-
 **性能的区别：**
 
 - 由于 Calico 使用 BGP 进行路由，其性能通常优于 Flannel。[Calico 可以实现直接的 Pod 到 Pod 通信，而无需在节点之间进行额外的封装和解封装操作]()。这使得 Calico 在大型或高度动态的集群中具有更好的性能。
 - Flannel 的覆盖网络模型会导致额外的封装和解封装开销，从而影响网络性能。对于较小的集群或对性能要求不高的场景，这可能并不是一个严重的问题。
 
-
-
 在k8s-master01节点安装Calico网络即可
 
-~~~powershell
+```powershell
 #下载calico文件
 wget https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
 
@@ -789,26 +696,22 @@ calico-node-f4ghp                          1/1     Running   0          101s
 calico-node-sj88q                          1/1     Running   0          101s
 calico-node-vnj7f                          1/1     Running   0          101s
 calico-node-vwnw4                          1/1     Running   0          101s
-~~~
-
-
+```
 
 #### 验证集群可用性
 
-~~~powershell
+```powershell
 #查看所有的节点
 [root@master01 ~]# kubectl get nodes
 NAME       STATUS   ROLES                  AGE   VERSION
 master01   Ready    control-plane,master   25m   v1.23.0
 master02   Ready    control-plane,master   25m   v1.23.0
 master03   Ready    control-plane,master   24m   v1.23.0
-~~~
-
-
+```
 
 查看kubernetes集群pod运行情况
 
-~~~powershell
+```powershell
 [root@master01 ~]# kubectl get pods -n kube-system
 NAME                               READY   STATUS    RESTARTS   AGE
 coredns-558bd4d5db-smp62           1/1     Running   0          13m
@@ -830,10 +733,7 @@ kube-proxy-ks97x                   1/1     Running   0          4m3s
 kube-scheduler-master01            1/1     Running   1          13m
 kube-scheduler-master02            1/1     Running   0          3m13s
 kube-scheduler-master03            1/1     Running   0          115s
-
-~~~
-
-
+```
 
 #### 部署Nginx程序测试
 
@@ -860,8 +760,6 @@ nginx        NodePort    10.103.195.31   <none>        80:32554/TCP   96s
 http://192.168.0.30:32554/
 ```
 
-
-
 #### kuboard k8s多集群管理平台
 
 > 在K8S集群之外准备一台主机安装docker，并通过docker安装kuboard
@@ -879,10 +777,7 @@ http://192.168.0.30:32554/
   eipwork/kuboard:v3
 ```
 
-
-
 访问kuboard页面：http://server_ip
 
 - 用户名：admin
 - 密码：Kuboard123        #大写的K
-
